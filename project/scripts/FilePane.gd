@@ -32,6 +32,7 @@ signal file_opened(entry: Dictionary)
 signal delete_requested(entries: Array)
 signal upload_requested(dest_path: String)
 signal mkdir_requested(dest_path: String)
+signal new_md_requested(dest_path: String)
 signal status_message(msg: String)
 signal drop_received(entries: Array, source_pane: FilePane)
 signal directory_loaded(acct: String, perms: Array)
@@ -64,6 +65,7 @@ var _sort_asc: bool = true
 @onready var _breadcrumb:     Label          = $VBoxContainer/NavBar/NavMargin/NavHBox/Breadcrumb
 @onready var _upload_btn:     Button         = $VBoxContainer/NavBar/NavMargin/NavHBox/UploadBtn
 @onready var _mkdir_btn:      Button         = $VBoxContainer/NavBar/NavMargin/NavHBox/MkdirBtn
+@onready var _new_md_btn:     Button         = $VBoxContainer/NavBar/NavMargin/NavHBox/NewMdBtn
 @onready var _col_header:     PanelContainer = $VBoxContainer/ColHeader
 @onready var _col_name_btn:   Button         = $VBoxContainer/ColHeader/ColMargin/ColHBox/ColNameBtn
 @onready var _col_size_btn:   Button         = $VBoxContainer/ColHeader/ColMargin/ColHBox/ColSizeBtn
@@ -80,6 +82,7 @@ func _ready() -> void:
 	_refresh_btn.pressed.connect(func(): refresh())
 	_upload_btn.pressed.connect(func(): upload_requested.emit(current_path))
 	_mkdir_btn.pressed.connect(func(): mkdir_requested.emit(current_path))
+	_new_md_btn.pressed.connect(func(): new_md_requested.emit(current_path))
 	_col_name_btn.pressed.connect(func(): _on_column_title_pressed(0))
 	_col_size_btn.pressed.connect(func(): _on_column_title_pressed(1))
 	_col_modified_btn.pressed.connect(func(): _on_column_title_pressed(2))
@@ -108,10 +111,12 @@ func setup(src: Source, api_ref: CopypartyAPI, start_path: String) -> void:
 		_source_label.text = "LOCAL"
 		_source_label.add_theme_color_override("font_color", C_ACCENT2)
 		_upload_btn.visible = false
+		_new_md_btn.visible = false
 	else:
 		_source_label.text = "REMOTE"
 		_source_label.add_theme_color_override("font_color", C_ACCENT)
 		_upload_btn.visible = true
+		_new_md_btn.visible = true
 	navigate_to(start_path)
 
 # ── Public navigation ─────────────────────────────────────────────────────────
