@@ -1,0 +1,138 @@
+[gd_scene format=3 uid="uid://bm5tr8c3jxwn4"]
+
+[ext_resource type="Script" uid="uid://ctkgiwjmfat1c" path="res://scripts/FilePane.gd" id="1"]
+
+[node name="FilePane" type="Control"]
+script = ExtResource("1")
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="VBoxContainer" type="VBoxContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+theme_override_constants/separation = 0
+
+[node name="NavBar" type="PanelContainer" parent="VBoxContainer"]
+layout_mode = 2
+
+[node name="NavMargin" type="MarginContainer" parent="VBoxContainer/NavBar"]
+layout_mode = 2
+theme_override_constants/margin_left = 8
+theme_override_constants/margin_right = 8
+theme_override_constants/margin_top = 4
+theme_override_constants/margin_bottom = 4
+
+[node name="NavHBox" type="HBoxContainer" parent="VBoxContainer/NavBar/NavMargin"]
+layout_mode = 2
+theme_override_constants/separation = 4
+
+[node name="SourceLabel" type="Label" parent="VBoxContainer/NavBar/NavMargin/NavHBox"]
+layout_mode = 2
+custom_minimum_size = Vector2(52, 0)
+text = "LOCAL"
+theme_override_font_sizes/font_size = 11
+
+[node name="NavSep1" type="VSeparator" parent="VBoxContainer/NavBar/NavMargin/NavHBox"]
+layout_mode = 2
+custom_minimum_size = Vector2(1, 0)
+
+[node name="BackBtn" type="Button" parent="VBoxContainer/NavBar/NavMargin/NavHBox"]
+layout_mode = 2
+custom_minimum_size = Vector2(28, 26)
+disabled = true
+text = "◀"
+
+[node name="FwdBtn" type="Button" parent="VBoxContainer/NavBar/NavMargin/NavHBox"]
+layout_mode = 2
+custom_minimum_size = Vector2(28, 26)
+disabled = true
+text = "▶"
+
+[node name="HomeBtn" type="Button" parent="VBoxContainer/NavBar/NavMargin/NavHBox"]
+layout_mode = 2
+custom_minimum_size = Vector2(28, 26)
+text = "🏠"
+
+[node name="RefreshBtn" type="Button" parent="VBoxContainer/NavBar/NavMargin/NavHBox"]
+layout_mode = 2
+custom_minimum_size = Vector2(28, 26)
+text = "🔄"
+
+[node name="NavSep2" type="VSeparator" parent="VBoxContainer/NavBar/NavMargin/NavHBox"]
+layout_mode = 2
+custom_minimum_size = Vector2(1, 0)
+
+[node name="Breadcrumb" type="Label" parent="VBoxContainer/NavBar/NavMargin/NavHBox"]
+layout_mode = 2
+size_flags_horizontal = 3
+clip_text = true
+text = "/"
+
+[node name="NavSep3" type="VSeparator" parent="VBoxContainer/NavBar/NavMargin/NavHBox"]
+layout_mode = 2
+custom_minimum_size = Vector2(1, 0)
+
+[node name="UploadBtn" type="Button" parent="VBoxContainer/NavBar/NavMargin/NavHBox"]
+layout_mode = 2
+visible = false
+text = "⬆ Upload"
+
+[node name="MkdirBtn" type="Button" parent="VBoxContainer/NavBar/NavMargin/NavHBox"]
+layout_mode = 2
+text = "+ Folder"
+
+[node name="ColHeader" type="PanelContainer" parent="VBoxContainer"]
+layout_mode = 2
+
+[node name="ColMargin" type="MarginContainer" parent="VBoxContainer/ColHeader"]
+layout_mode = 2
+theme_override_constants/margin_left = 4
+theme_override_constants/margin_right = 4
+theme_override_constants/margin_top = 2
+theme_override_constants/margin_bottom = 2
+
+[node name="ColHBox" type="HBoxContainer" parent="VBoxContainer/ColHeader/ColMargin"]
+layout_mode = 2
+theme_override_constants/separation = 0
+
+[node name="ColNameBtn" type="Button" parent="VBoxContainer/ColHeader/ColMargin/ColHBox"]
+layout_mode = 2
+size_flags_horizontal = 3
+flat = true
+alignment = 0
+text = "Name"
+
+[node name="ColSizeBtn" type="Button" parent="VBoxContainer/ColHeader/ColMargin/ColHBox"]
+layout_mode = 2
+custom_minimum_size = Vector2(90, 0)
+size_flags_horizontal = 8
+flat = true
+alignment = 0
+text = "Size"
+
+[node name="ColModifiedBtn" type="Button" parent="VBoxContainer/ColHeader/ColMargin/ColHBox"]
+layout_mode = 2
+custom_minimum_size = Vector2(150, 0)
+size_flags_horizontal = 8
+flat = true
+alignment = 0
+text = "Modified"
+
+[node name="ColTypeBtn" type="Button" parent="VBoxContainer/ColHeader/ColMargin/ColHBox"]
+layout_mode = 2
+custom_minimum_size = Vector2(55, 0)
+size_flags_horizontal = 8
+flat = true
+alignment = 0
+text = "Type"
+
+[node name="FileList" type="Tree" parent="VBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+hide_root = true
+select_mode = 2
+columns = 4
+column_titles_visible = false

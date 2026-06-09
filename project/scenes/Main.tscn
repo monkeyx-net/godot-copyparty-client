@@ -1,0 +1,764 @@
+[gd_scene format=3 uid="uid://dfrgj50hsbxyp"]
+
+[ext_resource type="Script" uid="uid://di7mbkjqee03u" path="res://scripts/Main.gd" id="1"]
+[ext_resource type="PackedScene" uid="uid://bm5tr8c3jxwn4" path="res://scenes/FilePane.tscn" id="2"]
+[ext_resource type="Texture2D" uid="uid://blaqfk8kun682" path="res://scenes/images/copyarty_logo2.svg" id="3_0bbpv"]
+[ext_resource type="Texture2D" uid="uid://cxegit8now3i7" path="res://scenes/images/godot_logo.svg" id="4_rarhs"]
+
+[node name="Main" type="Control" unique_id=59707136]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1")
+
+[node name="BG" type="ColorRect" parent="." unique_id=1019436578]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="." unique_id=802416699]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/separation = 0
+
+[node name="Toolbar" type="PanelContainer" parent="VBoxContainer" unique_id=1806371601]
+layout_mode = 2
+
+[node name="ToolbarMargin" type="MarginContainer" parent="VBoxContainer/Toolbar" unique_id=13723932]
+layout_mode = 2
+theme_override_constants/margin_left = 8
+theme_override_constants/margin_top = 6
+theme_override_constants/margin_right = 8
+theme_override_constants/margin_bottom = 6
+
+[node name="ToolbarScroll" type="ScrollContainer" parent="VBoxContainer/Toolbar/ToolbarMargin" unique_id=111111111]
+layout_mode = 2
+size_flags_horizontal = 3
+vertical_scroll_mode = 0
+
+[node name="ToolbarHBox" type="HBoxContainer" parent="VBoxContainer/Toolbar/ToolbarMargin/ToolbarScroll" unique_id=1596025962]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="ServerLabel" type="Label" parent="VBoxContainer/Toolbar/ToolbarMargin/ToolbarScroll/ToolbarHBox" unique_id=1434121740]
+layout_mode = 2
+text = "Server:"
+
+[node name="UrlInput" type="LineEdit" parent="VBoxContainer/Toolbar/ToolbarMargin/ToolbarScroll/ToolbarHBox" unique_id=363002099]
+custom_minimum_size = Vector2(0, 32)
+layout_mode = 2
+size_flags_horizontal = 3
+text = "https://files.monkeyx.net"
+placeholder_text = "https://files.example.com"
+expand_to_text_length = true
+
+[node name="ConnectBtn" type="Button" parent="VBoxContainer/Toolbar/ToolbarMargin/ToolbarScroll/ToolbarHBox" unique_id=1441194325]
+layout_mode = 2
+text = "Connect"
+
+[node name="Sep1" type="VSeparator" parent="VBoxContainer/Toolbar/ToolbarMargin/ToolbarScroll/ToolbarHBox" unique_id=994963262]
+custom_minimum_size = Vector2(1, 0)
+layout_mode = 2
+
+[node name="UserLabel" type="Label" parent="VBoxContainer/Toolbar/ToolbarMargin/ToolbarScroll/ToolbarHBox" unique_id=1195907503]
+layout_mode = 2
+text = "User:"
+
+[node name="UserInput" type="LineEdit" parent="VBoxContainer/Toolbar/ToolbarMargin/ToolbarScroll/ToolbarHBox" unique_id=1889516247]
+custom_minimum_size = Vector2(100, 32)
+layout_mode = 2
+placeholder_text = "(optional)"
+
+[node name="PwLabel" type="Label" parent="VBoxContainer/Toolbar/ToolbarMargin/ToolbarScroll/ToolbarHBox" unique_id=685006494]
+layout_mode = 2
+text = "Password:"
+
+[node name="PwInput" type="LineEdit" parent="VBoxContainer/Toolbar/ToolbarMargin/ToolbarScroll/ToolbarHBox" unique_id=17677993]
+custom_minimum_size = Vector2(120, 32)
+layout_mode = 2
+placeholder_text = "(optional)"
+secret = true
+
+[node name="LoginBtn" type="Button" parent="VBoxContainer/Toolbar/ToolbarMargin/ToolbarScroll/ToolbarHBox" unique_id=2074015737]
+layout_mode = 2
+text = "🔓 Auth"
+
+[node name="Sep2" type="VSeparator" parent="VBoxContainer/Toolbar/ToolbarMargin/ToolbarScroll/ToolbarHBox" unique_id=726495640]
+custom_minimum_size = Vector2(1, 0)
+layout_mode = 2
+
+[node name="SearchBtn" type="Button" parent="VBoxContainer/Toolbar/ToolbarMargin/ToolbarScroll/ToolbarHBox" unique_id=1158061402]
+layout_mode = 2
+text = "🔍 Search"
+
+[node name="Sep3" type="VSeparator" parent="VBoxContainer/Toolbar/ToolbarMargin/ToolbarScroll/ToolbarHBox" unique_id=178148049]
+custom_minimum_size = Vector2(1, 0)
+layout_mode = 2
+
+[node name="ThemeOpt" type="OptionButton" parent="VBoxContainer/Toolbar/ToolbarMargin/ToolbarScroll/ToolbarHBox" unique_id=1777428519]
+layout_mode = 2
+
+[node name="Sep4" type="VSeparator" parent="VBoxContainer/Toolbar/ToolbarMargin/ToolbarScroll/ToolbarHBox" unique_id=153273048]
+custom_minimum_size = Vector2(1, 0)
+layout_mode = 2
+
+[node name="FontOpt" type="OptionButton" parent="VBoxContainer/Toolbar/ToolbarMargin/ToolbarScroll/ToolbarHBox" unique_id=1498874376]
+layout_mode = 2
+
+[node name="OpacitySlider" type="HSlider" parent="VBoxContainer/Toolbar/ToolbarMargin/ToolbarScroll/ToolbarHBox" unique_id=1447983779]
+custom_minimum_size = Vector2(80, 0)
+layout_mode = 2
+tooltip_text = "Background opacity"
+min_value = 0.1
+max_value = 1.0
+step = 0.05
+value = 1.0
+
+[node name="Sep6" type="VSeparator" parent="VBoxContainer/Toolbar/ToolbarMargin/ToolbarScroll/ToolbarHBox" unique_id=987654321]
+custom_minimum_size = Vector2(1, 0)
+layout_mode = 2
+
+[node name="HideLBtn" type="Button" parent="VBoxContainer/Toolbar/ToolbarMargin/ToolbarScroll/ToolbarHBox" unique_id=123456789]
+layout_mode = 2
+tooltip_text = "Hide left pane"
+text = "◀ L"
+
+[node name="Sep5" type="VSeparator" parent="VBoxContainer/Toolbar/ToolbarMargin/ToolbarScroll/ToolbarHBox" unique_id=29409407]
+visible = false
+custom_minimum_size = Vector2(1, 0)
+layout_mode = 2
+
+[node name="ColorPickerBtn" type="ColorPickerButton" parent="VBoxContainer/Toolbar/ToolbarMargin/ToolbarScroll/ToolbarHBox" unique_id=206379174]
+visible = false
+custom_minimum_size = Vector2(60, 32)
+layout_mode = 2
+tooltip_text = "Accent / button highlight"
+
+[node name="ColorPickerBg" type="ColorPickerButton" parent="VBoxContainer/Toolbar/ToolbarMargin/ToolbarScroll/ToolbarHBox" unique_id=171283688]
+visible = false
+custom_minimum_size = Vector2(60, 32)
+layout_mode = 2
+tooltip_text = "Background"
+
+[node name="ColorPickerText" type="ColorPickerButton" parent="VBoxContainer/Toolbar/ToolbarMargin/ToolbarScroll/ToolbarHBox" unique_id=1221107183]
+visible = false
+custom_minimum_size = Vector2(60, 32)
+layout_mode = 2
+tooltip_text = "Font color"
+
+[node name="ContentHBox" type="HBoxContainer" parent="VBoxContainer" unique_id=126406980]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_constants/separation = 0
+
+[node name="PaneSplit" type="HSplitContainer" parent="VBoxContainer/ContentHBox" unique_id=1375001378]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_override_constants/separation = 4
+
+[node name="LeftPane" parent="VBoxContainer/ContentHBox/PaneSplit" unique_id=1748140458 instance=ExtResource("2")]
+layout_mode = 2
+
+[node name="RightPane" parent="VBoxContainer/ContentHBox/PaneSplit" unique_id=691896309 instance=ExtResource("2")]
+layout_mode = 2
+
+[node name="DetailPanel" type="PanelContainer" parent="VBoxContainer/ContentHBox" unique_id=2007944617]
+custom_minimum_size = Vector2(280, 0)
+layout_mode = 2
+
+[node name="DetailMargin" type="MarginContainer" parent="VBoxContainer/ContentHBox/DetailPanel" unique_id=1135740137]
+layout_mode = 2
+theme_override_constants/margin_left = 14
+theme_override_constants/margin_top = 14
+theme_override_constants/margin_right = 14
+theme_override_constants/margin_bottom = 14
+
+[node name="DetailScroll" type="ScrollContainer" parent="VBoxContainer/ContentHBox/DetailPanel/DetailMargin" unique_id=222222222]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+horizontal_scroll_mode = 0
+
+[node name="DetailVBox" type="VBoxContainer" parent="VBoxContainer/ContentHBox/DetailPanel/DetailMargin/DetailScroll" unique_id=289389077]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 10
+
+[node name="LogoBox" type="Control" parent="VBoxContainer/ContentHBox/DetailPanel/DetailMargin/DetailScroll/DetailVBox" unique_id=-1293967295]
+custom_minimum_size = Vector2(0, 120)
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="CopyartyLogo2" type="Sprite2D" parent="VBoxContainer/ContentHBox/DetailPanel/DetailMargin/DetailScroll/DetailVBox/LogoBox" unique_id=908223887]
+position = Vector2(123.27449, 56.982998)
+scale = Vector2(0.24819309, 0.16884144)
+texture = ExtResource("3_0bbpv")
+
+[node name="GodoCog1" type="Sprite2D" parent="VBoxContainer/ContentHBox/DetailPanel/DetailMargin/DetailScroll/DetailVBox/LogoBox/CopyartyLogo2" unique_id=1623592294]
+z_index = 1
+z_as_relative = false
+position = Vector2(-224.194, -22.056)
+scale = Vector2(0.08403094, 0.11450329)
+texture = ExtResource("4_rarhs")
+
+[node name="GodoCog2" type="Sprite2D" parent="VBoxContainer/ContentHBox/DetailPanel/DetailMargin/DetailScroll/DetailVBox/LogoBox/CopyartyLogo2" unique_id=1549189251]
+z_index = 1
+z_as_relative = false
+position = Vector2(222, -19)
+rotation = 0.6806784
+scale = Vector2(0.08403094, 0.11450329)
+texture = ExtResource("4_rarhs")
+
+[node name="DetailTitle" type="Label" parent="VBoxContainer/ContentHBox/DetailPanel/DetailMargin/DetailScroll/DetailVBox" unique_id=1306041518]
+visible = false
+layout_mode = 2
+theme_override_font_sizes/font_size = 14
+text = "File Details"
+
+[node name="TitleSep" type="HSeparator" parent="VBoxContainer/ContentHBox/DetailPanel/DetailMargin/DetailScroll/DetailVBox" unique_id=234408748]
+visible = false
+layout_mode = 2
+
+[node name="DetailName" type="Label" parent="VBoxContainer/ContentHBox/DetailPanel/DetailMargin/DetailScroll/DetailVBox" unique_id=1127480334]
+visible = false
+layout_mode = 2
+theme_override_font_sizes/font_size = 13
+text = "—"
+autowrap_mode = 3
+
+[node name="InfoGrid" type="GridContainer" parent="VBoxContainer/ContentHBox/DetailPanel/DetailMargin/DetailScroll/DetailVBox" unique_id=829224312]
+visible = false
+layout_mode = 2
+theme_override_constants/h_separation = 8
+theme_override_constants/v_separation = 4
+columns = 2
+
+[node name="SizeLbl" type="Label" parent="VBoxContainer/ContentHBox/DetailPanel/DetailMargin/DetailScroll/DetailVBox/InfoGrid" unique_id=2141686770]
+layout_mode = 2
+text = "Size:"
+
+[node name="SizeVal" type="Label" parent="VBoxContainer/ContentHBox/DetailPanel/DetailMargin/DetailScroll/DetailVBox/InfoGrid" unique_id=942848881]
+layout_mode = 2
+text = "—"
+
+[node name="DateLbl" type="Label" parent="VBoxContainer/ContentHBox/DetailPanel/DetailMargin/DetailScroll/DetailVBox/InfoGrid" unique_id=1288225317]
+layout_mode = 2
+text = "Modified:"
+
+[node name="DateVal" type="Label" parent="VBoxContainer/ContentHBox/DetailPanel/DetailMargin/DetailScroll/DetailVBox/InfoGrid" unique_id=1339705600]
+layout_mode = 2
+text = "—"
+
+[node name="ExtLbl" type="Label" parent="VBoxContainer/ContentHBox/DetailPanel/DetailMargin/DetailScroll/DetailVBox/InfoGrid" unique_id=1875707596]
+layout_mode = 2
+text = "Type:"
+
+[node name="ExtVal" type="Label" parent="VBoxContainer/ContentHBox/DetailPanel/DetailMargin/DetailScroll/DetailVBox/InfoGrid" unique_id=2035903642]
+layout_mode = 2
+text = "—"
+
+[node name="UrlSep" type="HSeparator" parent="VBoxContainer/ContentHBox/DetailPanel/DetailMargin/DetailScroll/DetailVBox" unique_id=1790220607]
+layout_mode = 2
+
+[node name="DetailUrlLabel" type="Label" parent="VBoxContainer/ContentHBox/DetailPanel/DetailMargin/DetailScroll/DetailVBox" unique_id=839296930]
+layout_mode = 2
+text = "Direct URL"
+
+[node name="DetailUrl" type="LineEdit" parent="VBoxContainer/ContentHBox/DetailPanel/DetailMargin/DetailScroll/DetailVBox" unique_id=19276437]
+layout_mode = 2
+size_flags_horizontal = 3
+placeholder_text = "(select a file)"
+editable = false
+
+[node name="ActionSep" type="HSeparator" parent="VBoxContainer/ContentHBox/DetailPanel/DetailMargin/DetailScroll/DetailVBox" unique_id=1636435710]
+layout_mode = 2
+
+[node name="ActionsLabel" type="Label" parent="VBoxContainer/ContentHBox/DetailPanel/DetailMargin/DetailScroll/DetailVBox" unique_id=1959501428]
+layout_mode = 2
+text = "Actions"
+
+[node name="ActionGrid" type="GridContainer" parent="VBoxContainer/ContentHBox/DetailPanel/DetailMargin/DetailScroll/DetailVBox" unique_id=854891395]
+layout_mode = 2
+theme_override_constants/h_separation = 6
+theme_override_constants/v_separation = 6
+columns = 2
+
+[node name="DlBtn" type="Button" parent="VBoxContainer/ContentHBox/DetailPanel/DetailMargin/DetailScroll/DetailVBox/ActionGrid" unique_id=1496054468]
+layout_mode = 2
+size_flags_horizontal = 3
+disabled = true
+text = "⬇ Download"
+
+[node name="TransferBtn" type="Button" parent="VBoxContainer/ContentHBox/DetailPanel/DetailMargin/DetailScroll/DetailVBox/ActionGrid" unique_id=971188444]
+layout_mode = 2
+size_flags_horizontal = 3
+disabled = true
+text = "⇄ Transfer"
+
+[node name="CopyBtn" type="Button" parent="VBoxContainer/ContentHBox/DetailPanel/DetailMargin/DetailScroll/DetailVBox/ActionGrid" unique_id=2119328973]
+layout_mode = 2
+size_flags_horizontal = 3
+disabled = true
+text = "📋 Copy"
+
+[node name="MoveBtn" type="Button" parent="VBoxContainer/ContentHBox/DetailPanel/DetailMargin/DetailScroll/DetailVBox/ActionGrid" unique_id=1566271840]
+layout_mode = 2
+size_flags_horizontal = 3
+disabled = true
+text = "↪ Move/Rename"
+
+[node name="DeleteBtn" type="Button" parent="VBoxContainer/ContentHBox/DetailPanel/DetailMargin/DetailScroll/DetailVBox/ActionGrid" unique_id=805310755]
+layout_mode = 2
+size_flags_horizontal = 3
+disabled = true
+text = "🗑 Delete"
+
+[node name="UrlCopyBtn" type="Button" parent="VBoxContainer/ContentHBox/DetailPanel/DetailMargin/DetailScroll/DetailVBox/ActionGrid" unique_id=840382448]
+visible = false
+layout_mode = 2
+size_flags_horizontal = 3
+text = "🔗 Copy URL"
+
+[node name="SyncBtn" type="Button" parent="VBoxContainer/ContentHBox/DetailPanel/DetailMargin/DetailScroll/DetailVBox/ActionGrid" unique_id=1797070193]
+layout_mode = 2
+size_flags_horizontal = 3
+disabled = true
+text = "⇆ Sync"
+
+[node name="ProgRow" type="HBoxContainer" parent="VBoxContainer/ContentHBox/DetailPanel/DetailMargin/DetailScroll/DetailVBox" unique_id=1164763654]
+layout_mode = 2
+theme_override_constants/separation = 6
+
+[node name="ProgressLabel" type="Label" parent="VBoxContainer/ContentHBox/DetailPanel/DetailMargin/DetailScroll/DetailVBox/ProgRow" unique_id=1138872984]
+visible = false
+layout_mode = 2
+size_flags_horizontal = 3
+text_overrun_behavior = 3
+
+[node name="ProgressBar" type="ProgressBar" parent="VBoxContainer/ContentHBox/DetailPanel/DetailMargin/DetailScroll/DetailVBox/ProgRow" unique_id=967731014]
+visible = false
+custom_minimum_size = Vector2(0, 16)
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="LogSep" type="HSeparator" parent="VBoxContainer/ContentHBox/DetailPanel/DetailMargin/DetailScroll/DetailVBox" unique_id=661978774]
+layout_mode = 2
+
+[node name="LogLabel" type="Label" parent="VBoxContainer/ContentHBox/DetailPanel/DetailMargin/DetailScroll/DetailVBox" unique_id=78969815]
+layout_mode = 2
+text = "Log"
+
+[node name="StatusLog" type="TextEdit" parent="VBoxContainer/ContentHBox/DetailPanel/DetailMargin/DetailScroll/DetailVBox" unique_id=1471056895]
+custom_minimum_size = Vector2(0, 120)
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_override_font_sizes/font_size = 11
+editable = false
+wrap_mode = 1
+
+[node name="Overlay" type="ColorRect" parent="." unique_id=163039431]
+visible = false
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0, 0, 0, 0.55)
+
+[node name="SearchDialog" type="PanelContainer" parent="." unique_id=1917791732]
+visible = false
+custom_minimum_size = Vector2(640, 480)
+layout_mode = 1
+
+[node name="DlgBase" type="VBoxContainer" parent="SearchDialog" unique_id=1342268095]
+layout_mode = 2
+
+[node name="DlgMargin" type="MarginContainer" parent="SearchDialog/DlgBase" unique_id=836514385]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_constants/margin_left = 16
+theme_override_constants/margin_top = 14
+theme_override_constants/margin_right = 16
+theme_override_constants/margin_bottom = 14
+
+[node name="DlgInner" type="VBoxContainer" parent="SearchDialog/DlgBase/DlgMargin" unique_id=1814075036]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_constants/separation = 10
+
+[node name="TitleRow" type="HBoxContainer" parent="SearchDialog/DlgBase/DlgMargin/DlgInner" unique_id=1187834034]
+layout_mode = 2
+
+[node name="TitleLabel" type="Label" parent="SearchDialog/DlgBase/DlgMargin/DlgInner/TitleRow" unique_id=1743494572]
+layout_mode = 2
+theme_override_font_sizes/font_size = 14
+text = "Search Files"
+
+[node name="TitleSpacer" type="Control" parent="SearchDialog/DlgBase/DlgMargin/DlgInner/TitleRow" unique_id=378128244]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="CloseXBtn" type="Button" parent="SearchDialog/DlgBase/DlgMargin/DlgInner/TitleRow" unique_id=1263361157]
+custom_minimum_size = Vector2(28, 28)
+layout_mode = 2
+text = "✕"
+
+[node name="TitleSep" type="HSeparator" parent="SearchDialog/DlgBase/DlgMargin/DlgInner" unique_id=894246082]
+layout_mode = 2
+
+[node name="DlgContent" type="VBoxContainer" parent="SearchDialog/DlgBase/DlgMargin/DlgInner" unique_id=1475816013]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_constants/separation = 8
+
+[node name="HintLabel" type="Label" parent="SearchDialog/DlgBase/DlgMargin/DlgInner/DlgContent" unique_id=1744601782]
+layout_mode = 2
+theme_override_font_sizes/font_size = 11
+text = "Syntax: filename, size:>1mb, date:>2024-01, tag:field=value"
+autowrap_mode = 3
+
+[node name="SearchRow" type="HBoxContainer" parent="SearchDialog/DlgBase/DlgMargin/DlgInner/DlgContent" unique_id=621179187]
+layout_mode = 2
+theme_override_constants/separation = 6
+
+[node name="SearchInput" type="LineEdit" parent="SearchDialog/DlgBase/DlgMargin/DlgInner/DlgContent/SearchRow" unique_id=1492129537]
+layout_mode = 2
+size_flags_horizontal = 3
+placeholder_text = "Search query..."
+
+[node name="SearchGoBtn" type="Button" parent="SearchDialog/DlgBase/DlgMargin/DlgInner/DlgContent/SearchRow" unique_id=2019688605]
+layout_mode = 2
+text = "Search"
+
+[node name="SearchResults" type="ItemList" parent="SearchDialog/DlgBase/DlgMargin/DlgInner/DlgContent" unique_id=918013361]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="SearchCloseBtn" type="Button" parent="SearchDialog/DlgBase/DlgMargin/DlgInner/DlgContent" unique_id=283349825]
+layout_mode = 2
+text = "Close"
+
+[node name="MkdirDialog" type="PanelContainer" parent="." unique_id=1678360599]
+visible = false
+custom_minimum_size = Vector2(380, 160)
+layout_mode = 1
+
+[node name="DlgBase" type="VBoxContainer" parent="MkdirDialog" unique_id=324656332]
+layout_mode = 2
+
+[node name="DlgMargin" type="MarginContainer" parent="MkdirDialog/DlgBase" unique_id=1771294166]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_constants/margin_left = 16
+theme_override_constants/margin_top = 14
+theme_override_constants/margin_right = 16
+theme_override_constants/margin_bottom = 14
+
+[node name="DlgInner" type="VBoxContainer" parent="MkdirDialog/DlgBase/DlgMargin" unique_id=338497025]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_constants/separation = 10
+
+[node name="TitleRow" type="HBoxContainer" parent="MkdirDialog/DlgBase/DlgMargin/DlgInner" unique_id=601735766]
+layout_mode = 2
+
+[node name="TitleLabel" type="Label" parent="MkdirDialog/DlgBase/DlgMargin/DlgInner/TitleRow" unique_id=1027888642]
+layout_mode = 2
+theme_override_font_sizes/font_size = 14
+text = "New Folder"
+
+[node name="TitleSpacer" type="Control" parent="MkdirDialog/DlgBase/DlgMargin/DlgInner/TitleRow" unique_id=1806740831]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="CloseXBtn" type="Button" parent="MkdirDialog/DlgBase/DlgMargin/DlgInner/TitleRow" unique_id=1680947579]
+custom_minimum_size = Vector2(28, 28)
+layout_mode = 2
+text = "✕"
+
+[node name="TitleSep" type="HSeparator" parent="MkdirDialog/DlgBase/DlgMargin/DlgInner" unique_id=1971484698]
+layout_mode = 2
+
+[node name="DlgContent" type="VBoxContainer" parent="MkdirDialog/DlgBase/DlgMargin/DlgInner" unique_id=1215707117]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_constants/separation = 8
+
+[node name="MkdirLabel" type="Label" parent="MkdirDialog/DlgBase/DlgMargin/DlgInner/DlgContent" unique_id=1845978136]
+layout_mode = 2
+text = "Folder name:"
+
+[node name="MkdirInput" type="LineEdit" parent="MkdirDialog/DlgBase/DlgMargin/DlgInner/DlgContent" unique_id=2039482257]
+layout_mode = 2
+placeholder_text = "New Folder"
+
+[node name="MkdirBtnRow" type="HBoxContainer" parent="MkdirDialog/DlgBase/DlgMargin/DlgInner/DlgContent" unique_id=869784496]
+layout_mode = 2
+theme_override_constants/separation = 8
+alignment = 2
+
+[node name="MkdirCancelBtn" type="Button" parent="MkdirDialog/DlgBase/DlgMargin/DlgInner/DlgContent/MkdirBtnRow" unique_id=421007321]
+layout_mode = 2
+text = "Cancel"
+
+[node name="MkdirOkBtn" type="Button" parent="MkdirDialog/DlgBase/DlgMargin/DlgInner/DlgContent/MkdirBtnRow" unique_id=1180033474]
+layout_mode = 2
+text = "Create"
+
+[node name="MoveDialog" type="PanelContainer" parent="." unique_id=12996696]
+visible = false
+custom_minimum_size = Vector2(480, 160)
+layout_mode = 1
+
+[node name="DlgBase" type="VBoxContainer" parent="MoveDialog" unique_id=953164927]
+layout_mode = 2
+
+[node name="DlgMargin" type="MarginContainer" parent="MoveDialog/DlgBase" unique_id=591763877]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_constants/margin_left = 16
+theme_override_constants/margin_top = 14
+theme_override_constants/margin_right = 16
+theme_override_constants/margin_bottom = 14
+
+[node name="DlgInner" type="VBoxContainer" parent="MoveDialog/DlgBase/DlgMargin" unique_id=1057794370]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_constants/separation = 10
+
+[node name="TitleRow" type="HBoxContainer" parent="MoveDialog/DlgBase/DlgMargin/DlgInner" unique_id=805482490]
+layout_mode = 2
+
+[node name="TitleLabel" type="Label" parent="MoveDialog/DlgBase/DlgMargin/DlgInner/TitleRow" unique_id=1085143820]
+layout_mode = 2
+theme_override_font_sizes/font_size = 14
+text = "Move / Copy"
+
+[node name="TitleSpacer" type="Control" parent="MoveDialog/DlgBase/DlgMargin/DlgInner/TitleRow" unique_id=414561973]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="CloseXBtn" type="Button" parent="MoveDialog/DlgBase/DlgMargin/DlgInner/TitleRow" unique_id=919667297]
+custom_minimum_size = Vector2(28, 28)
+layout_mode = 2
+text = "✕"
+
+[node name="TitleSep" type="HSeparator" parent="MoveDialog/DlgBase/DlgMargin/DlgInner" unique_id=227368815]
+layout_mode = 2
+
+[node name="DlgContent" type="VBoxContainer" parent="MoveDialog/DlgBase/DlgMargin/DlgInner" unique_id=743521057]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_constants/separation = 8
+
+[node name="MoveLabel" type="Label" parent="MoveDialog/DlgBase/DlgMargin/DlgInner/DlgContent" unique_id=1230760489]
+layout_mode = 2
+text = "Destination path:"
+
+[node name="MoveInput" type="LineEdit" parent="MoveDialog/DlgBase/DlgMargin/DlgInner/DlgContent" unique_id=1978773753]
+layout_mode = 2
+placeholder_text = "/path/to/destination"
+
+[node name="MoveBtnRow" type="HBoxContainer" parent="MoveDialog/DlgBase/DlgMargin/DlgInner/DlgContent" unique_id=248053458]
+layout_mode = 2
+theme_override_constants/separation = 8
+alignment = 2
+
+[node name="MoveCancelBtn" type="Button" parent="MoveDialog/DlgBase/DlgMargin/DlgInner/DlgContent/MoveBtnRow" unique_id=1301661095]
+layout_mode = 2
+text = "Cancel"
+
+[node name="MoveCopyBtn" type="Button" parent="MoveDialog/DlgBase/DlgMargin/DlgInner/DlgContent/MoveBtnRow" unique_id=1790583225]
+layout_mode = 2
+text = "Copy"
+
+[node name="MoveOkBtn" type="Button" parent="MoveDialog/DlgBase/DlgMargin/DlgInner/DlgContent/MoveBtnRow" unique_id=1938434082]
+layout_mode = 2
+text = "Move"
+
+[node name="ConfirmDialog" type="PanelContainer" parent="." unique_id=284666985]
+visible = false
+custom_minimum_size = Vector2(420, 170)
+layout_mode = 1
+
+[node name="DlgBase" type="VBoxContainer" parent="ConfirmDialog" unique_id=1139213555]
+layout_mode = 2
+
+[node name="DlgMargin" type="MarginContainer" parent="ConfirmDialog/DlgBase" unique_id=1760790783]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_constants/margin_left = 16
+theme_override_constants/margin_top = 14
+theme_override_constants/margin_right = 16
+theme_override_constants/margin_bottom = 14
+
+[node name="DlgInner" type="VBoxContainer" parent="ConfirmDialog/DlgBase/DlgMargin" unique_id=1149006715]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_constants/separation = 10
+
+[node name="TitleRow" type="HBoxContainer" parent="ConfirmDialog/DlgBase/DlgMargin/DlgInner" unique_id=1272387705]
+layout_mode = 2
+
+[node name="TitleLabel" type="Label" parent="ConfirmDialog/DlgBase/DlgMargin/DlgInner/TitleRow" unique_id=436411414]
+layout_mode = 2
+theme_override_font_sizes/font_size = 14
+text = "Confirm Delete"
+
+[node name="TitleSpacer" type="Control" parent="ConfirmDialog/DlgBase/DlgMargin/DlgInner/TitleRow" unique_id=1518720446]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="CloseXBtn" type="Button" parent="ConfirmDialog/DlgBase/DlgMargin/DlgInner/TitleRow" unique_id=1082170267]
+custom_minimum_size = Vector2(28, 28)
+layout_mode = 2
+text = "✕"
+
+[node name="TitleSep" type="HSeparator" parent="ConfirmDialog/DlgBase/DlgMargin/DlgInner" unique_id=384064643]
+layout_mode = 2
+
+[node name="DlgContent" type="VBoxContainer" parent="ConfirmDialog/DlgBase/DlgMargin/DlgInner" unique_id=319718472]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_constants/separation = 8
+
+[node name="ConfirmMsg" type="Label" parent="ConfirmDialog/DlgBase/DlgMargin/DlgInner/DlgContent" unique_id=687785152]
+layout_mode = 2
+size_flags_vertical = 3
+autowrap_mode = 3
+
+[node name="ConfirmBtnRow" type="HBoxContainer" parent="ConfirmDialog/DlgBase/DlgMargin/DlgInner/DlgContent" unique_id=1586426852]
+layout_mode = 2
+theme_override_constants/separation = 8
+alignment = 2
+
+[node name="ConfirmCancelBtn" type="Button" parent="ConfirmDialog/DlgBase/DlgMargin/DlgInner/DlgContent/ConfirmBtnRow" unique_id=603044031]
+layout_mode = 2
+text = "Cancel"
+
+[node name="ConfirmOkBtn" type="Button" parent="ConfirmDialog/DlgBase/DlgMargin/DlgInner/DlgContent/ConfirmBtnRow" unique_id=523194860]
+layout_mode = 2
+text = "🗑 Delete"
+
+[node name="SyncDialog" type="PanelContainer" parent="." unique_id=1339790165]
+visible = false
+custom_minimum_size = Vector2(460, 220)
+layout_mode = 1
+
+[node name="DlgBase" type="VBoxContainer" parent="SyncDialog" unique_id=1091125827]
+layout_mode = 2
+
+[node name="DlgMargin" type="MarginContainer" parent="SyncDialog/DlgBase" unique_id=1327691474]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_constants/margin_left = 16
+theme_override_constants/margin_top = 14
+theme_override_constants/margin_right = 16
+theme_override_constants/margin_bottom = 14
+
+[node name="DlgInner" type="VBoxContainer" parent="SyncDialog/DlgBase/DlgMargin" unique_id=43253958]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_constants/separation = 10
+
+[node name="TitleRow" type="HBoxContainer" parent="SyncDialog/DlgBase/DlgMargin/DlgInner" unique_id=1125489241]
+layout_mode = 2
+
+[node name="TitleLabel" type="Label" parent="SyncDialog/DlgBase/DlgMargin/DlgInner/TitleRow" unique_id=1017909722]
+layout_mode = 2
+theme_override_font_sizes/font_size = 14
+text = "Sync File"
+
+[node name="TitleSpacer" type="Control" parent="SyncDialog/DlgBase/DlgMargin/DlgInner/TitleRow" unique_id=168585163]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="CloseXBtn" type="Button" parent="SyncDialog/DlgBase/DlgMargin/DlgInner/TitleRow" unique_id=929921836]
+custom_minimum_size = Vector2(28, 28)
+layout_mode = 2
+text = "✕"
+
+[node name="TitleSep" type="HSeparator" parent="SyncDialog/DlgBase/DlgMargin/DlgInner" unique_id=196964533]
+layout_mode = 2
+
+[node name="DlgContent" type="VBoxContainer" parent="SyncDialog/DlgBase/DlgMargin/DlgInner" unique_id=1517604847]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_constants/separation = 8
+
+[node name="SyncInfoGrid" type="GridContainer" parent="SyncDialog/DlgBase/DlgMargin/DlgInner/DlgContent" unique_id=664728378]
+layout_mode = 2
+theme_override_constants/h_separation = 12
+theme_override_constants/v_separation = 4
+columns = 3
+
+[node name="HeaderBlank" type="Label" parent="SyncDialog/DlgBase/DlgMargin/DlgInner/DlgContent/SyncInfoGrid" unique_id=1881268937]
+layout_mode = 2
+
+[node name="LocalHdr" type="Label" parent="SyncDialog/DlgBase/DlgMargin/DlgInner/DlgContent/SyncInfoGrid" unique_id=676124504]
+layout_mode = 2
+text = "Local"
+
+[node name="RemoteHdr" type="Label" parent="SyncDialog/DlgBase/DlgMargin/DlgInner/DlgContent/SyncInfoGrid" unique_id=163676879]
+layout_mode = 2
+text = "Remote"
+
+[node name="ModLbl" type="Label" parent="SyncDialog/DlgBase/DlgMargin/DlgInner/DlgContent/SyncInfoGrid" unique_id=1484893963]
+layout_mode = 2
+text = "Modified:"
+
+[node name="LocalTs" type="Label" parent="SyncDialog/DlgBase/DlgMargin/DlgInner/DlgContent/SyncInfoGrid" unique_id=1489975457]
+layout_mode = 2
+text = "—"
+
+[node name="RemoteTs" type="Label" parent="SyncDialog/DlgBase/DlgMargin/DlgInner/DlgContent/SyncInfoGrid" unique_id=1151241173]
+layout_mode = 2
+text = "—"
+
+[node name="SizeLbl" type="Label" parent="SyncDialog/DlgBase/DlgMargin/DlgInner/DlgContent/SyncInfoGrid" unique_id=1288545263]
+layout_mode = 2
+text = "Size:"
+
+[node name="LocalSz" type="Label" parent="SyncDialog/DlgBase/DlgMargin/DlgInner/DlgContent/SyncInfoGrid" unique_id=539979068]
+layout_mode = 2
+text = "—"
+
+[node name="RemoteSz" type="Label" parent="SyncDialog/DlgBase/DlgMargin/DlgInner/DlgContent/SyncInfoGrid" unique_id=904858781]
+layout_mode = 2
+text = "—"
+
+[node name="NewerLabel" type="Label" parent="SyncDialog/DlgBase/DlgMargin/DlgInner/DlgContent" unique_id=740796200]
+layout_mode = 2
+autowrap_mode = 3
+
+[node name="SyncBtnRow" type="HBoxContainer" parent="SyncDialog/DlgBase/DlgMargin/DlgInner/DlgContent" unique_id=201921570]
+layout_mode = 2
+theme_override_constants/separation = 8
+alignment = 2
+
+[node name="SyncCancelBtn" type="Button" parent="SyncDialog/DlgBase/DlgMargin/DlgInner/DlgContent/SyncBtnRow" unique_id=1407559930]
+layout_mode = 2
+text = "Cancel"
+
+[node name="UseLocalBtn" type="Button" parent="SyncDialog/DlgBase/DlgMargin/DlgInner/DlgContent/SyncBtnRow" unique_id=226776440]
+layout_mode = 2
+text = "Use Local →"
+
+[node name="UseRemoteBtn" type="Button" parent="SyncDialog/DlgBase/DlgMargin/DlgInner/DlgContent/SyncBtnRow" unique_id=746215226]
+layout_mode = 2
+text = "← Use Remote"
