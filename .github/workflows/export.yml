@@ -151,6 +151,10 @@ jobs:
       - name: Export Android
         continue-on-error: true
         run: |
+          # No distribution keystore in CI: sign the release APK with the generated debug keystore
+          export GODOT_ANDROID_KEYSTORE_RELEASE_PATH="$HOME/.android/debug.keystore"
+          export GODOT_ANDROID_KEYSTORE_RELEASE_USER="androiddebugkey"
+          export GODOT_ANDROID_KEYSTORE_RELEASE_PASSWORD="android"
           godot --headless --path "$PROJECT_PATH" \
             --export-release "Android" \
             "$GITHUB_WORKSPACE/builds/android/CopypartyClient.apk"
