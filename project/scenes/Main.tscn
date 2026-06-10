@@ -337,6 +337,11 @@ size_flags_horizontal = 3
 disabled = true
 text = "⇆ Sync"
 
+[node name="NewMdBtn" type="Button" parent="VBoxContainer/ContentHBox/DetailPanel/DetailMargin/DetailScroll/DetailVBox/ActionGrid"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "📄 New .md"
+
 [node name="ProgRow" type="HBoxContainer" parent="VBoxContainer/ContentHBox/DetailPanel/DetailMargin/DetailScroll/DetailVBox" unique_id=1164763654]
 layout_mode = 2
 theme_override_constants/separation = 6

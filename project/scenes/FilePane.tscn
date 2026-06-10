@@ -83,11 +83,6 @@ text = "⬆ Upload"
 layout_mode = 2
 text = "+ Folder"
 
-[node name="NewMdBtn" type="Button" parent="VBoxContainer/NavBar/NavMargin/NavHBox"]
-layout_mode = 2
-visible = false
-text = "+ .md"
-
 [node name="ColHeader" type="PanelContainer" parent="VBoxContainer"]
 layout_mode = 2
 

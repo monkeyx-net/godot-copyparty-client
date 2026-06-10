@@ -142,6 +142,7 @@ var _md_pane:   FilePane
 @onready var delete_btn:     Button   = $VBoxContainer/ContentHBox/DetailPanel/DetailMargin/DetailScroll/DetailVBox/ActionGrid/DeleteBtn
 @onready var url_copy_btn:   Button   = $VBoxContainer/ContentHBox/DetailPanel/DetailMargin/DetailScroll/DetailVBox/ActionGrid/UrlCopyBtn
 @onready var _sync_btn:      Button   = $VBoxContainer/ContentHBox/DetailPanel/DetailMargin/DetailScroll/DetailVBox/ActionGrid/SyncBtn
+@onready var _new_md_btn:    Button   = $VBoxContainer/ContentHBox/DetailPanel/DetailMargin/DetailScroll/DetailVBox/ActionGrid/NewMdBtn
 @onready var status_log:     TextEdit = $VBoxContainer/ContentHBox/DetailPanel/DetailMargin/DetailScroll/DetailVBox/StatusLog
 @onready var _godocog1:      Sprite2D = $VBoxContainer/ContentHBox/DetailPanel/DetailMargin/DetailScroll/DetailVBox/LogoBox/CopyartyLogo2/GodoCog1
 @onready var _godocog2:      Sprite2D = $VBoxContainer/ContentHBox/DetailPanel/DetailMargin/DetailScroll/DetailVBox/LogoBox/CopyartyLogo2/GodoCog2
@@ -307,7 +308,7 @@ func _ready() -> void:
 	_connect_pane(right_pane)
 	right_pane.upload_requested.connect(_on_upload_requested)
 	right_pane.directory_loaded.connect(_on_right_pane_loaded)
-	right_pane.new_md_requested.connect(_on_new_md_requested.bind(right_pane))
+	_new_md_btn.pressed.connect(_on_new_md_requested.bind("", right_pane))
 
 	# Mobile: back button to return from the detail panel to the file list
 	_detail_back_btn = Button.new()
@@ -1493,6 +1494,7 @@ func _apply_main_theme_colors() -> void:
 	_apply_btn(delete_btn, C_DANGER)
 	_apply_btn(url_copy_btn, C_PANEL)
 	_apply_btn(_sync_btn, C_ACCENT2)
+	_apply_btn(_new_md_btn, C_PANEL)
 	status_log.add_theme_color_override("font_color", C_TEXT)
 	var sls := StyleBoxFlat.new()
 	sls.bg_color = C_BG
