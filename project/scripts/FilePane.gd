@@ -491,4 +491,11 @@ func set_compact(compact: bool) -> void:
 	_col_size_btn.visible     = not compact
 	_col_modified_btn.visible = not compact
 	_col_type_btn.visible     = not compact
+	var nav_btn_size := Vector2(40, 40) if compact else Vector2(28, 26)
+	for b in [_back_btn, _fwd_btn, _home_btn, _refresh_btn]:
+		b.custom_minimum_size = nav_btn_size
+	if compact:
+		_file_list.add_theme_constant_override("v_separation", 8)
+	else:
+		_file_list.remove_theme_constant_override("v_separation")
 	_populate_list()

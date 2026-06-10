@@ -70,6 +70,7 @@ var _mobile_mode  := false
 var _has_selection := false
 var _is_authed := false
 var _left_pane_hidden := false
+var _detail_back_btn: Button
 
 # ── Dialog state ──────────────────────────────────────────────────────────────
 var active_dialog: Control = null
@@ -121,11 +122,13 @@ var _md_pane:   FilePane
 @onready var _color_picker_text: ColorPickerButton = $VBoxContainer/Toolbar/ToolbarMargin/ToolbarScroll/ToolbarHBox/ColorPickerText
 
 # ── Scene nodes: panes ────────────────────────────────────────────────────────
+@onready var _pane_split: HSplitContainer = $VBoxContainer/ContentHBox/PaneSplit
 @onready var left_pane:  FilePane = $VBoxContainer/ContentHBox/PaneSplit/LeftPane
 @onready var right_pane: FilePane = $VBoxContainer/ContentHBox/PaneSplit/RightPane
 
 # ── Scene nodes: detail panel ─────────────────────────────────────────────────
 @onready var _detail_panel:  PanelContainer = $VBoxContainer/ContentHBox/DetailPanel
+@onready var _detail_vbox:   VBoxContainer  = $VBoxContainer/ContentHBox/DetailPanel/DetailMargin/DetailScroll/DetailVBox
 @onready var detail_name:    Label    = $VBoxContainer/ContentHBox/DetailPanel/DetailMargin/DetailScroll/DetailVBox/DetailName
 @onready var detail_size:    Label    = $VBoxContainer/ContentHBox/DetailPanel/DetailMargin/DetailScroll/DetailVBox/InfoGrid/SizeVal
 @onready var detail_date:    Label    = $VBoxContainer/ContentHBox/DetailPanel/DetailMargin/DetailScroll/DetailVBox/InfoGrid/DateVal
@@ -168,6 +171,7 @@ var _md_pane:   FilePane
 
 # ─────────────────────────────────────────────────────────────────────────────
 func _ready() -> void:
+	_apply_display_scale()
 	api = CopypartyAPI.new()
 	add_child(api)
 	set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
@@ -305,6 +309,14 @@ func _ready() -> void:
 	right_pane.directory_loaded.connect(_on_right_pane_loaded)
 	right_pane.new_md_requested.connect(_on_new_md_requested.bind(right_pane))
 
+	# Mobile: back button to return from the detail panel to the file list
+	_detail_back_btn = Button.new()
+	_detail_back_btn.text = "← Files"
+	_detail_back_btn.visible = false
+	_detail_back_btn.pressed.connect(_on_detail_back)
+	_detail_vbox.add_child(_detail_back_btn)
+	_detail_vbox.move_child(_detail_back_btn, 0)
+
 	# Apply visual theme
 	_apply_main_theme_colors()
 	_apply_font("")
@@ -318,13 +330,32 @@ func _notification(what: int) -> void:
 	if what == NOTIFICATION_WM_SIZE_CHANGED:
 		_apply_responsive_layout()
 
+func _apply_display_scale() -> void:
+	if OS.get_name() != "Android":
+		return
+	var dpi := DisplayServer.screen_get_dpi()
+	if dpi <= 0:
+		dpi = 160
+	get_window().content_scale_factor = clampf(dpi / 160.0, 1.0, 4.0)
+
 func _apply_responsive_layout() -> void:
-	var narrow := DisplayServer.window_get_size().x < _MOBILE_BP
+	var narrow := get_viewport_rect().size.x < _MOBILE_BP
 	if narrow != _mobile_mode:
 		_mobile_mode = narrow
 		left_pane.set_compact(narrow)
 		right_pane.set_compact(narrow)
-	_detail_panel.visible = not _mobile_mode or _has_selection
+		_server_lbl.visible = not narrow
+		_user_lbl.visible   = not narrow
+		_pw_lbl.visible     = not narrow
+		if _left_pane_hidden != narrow:
+			_toggle_left_pane()
+	_update_content_visibility()
+
+func _update_content_visibility() -> void:
+	var show_detail := not _mobile_mode or _has_selection or progress_bar.visible
+	_detail_panel.visible = show_detail
+	_pane_split.visible = not _mobile_mode or not show_detail
+	_detail_back_btn.visible = _mobile_mode
 
 # ─────────────────────────────────────────────────────────────────────────────
 #  Toolbar callbacks
@@ -655,8 +686,7 @@ func _update_detail_panel(entry: Dictionary) -> void:
 		_clear_detail()
 		return
 	_has_selection = true
-	if _mobile_mode:
-		_detail_panel.visible = true
+	_update_content_visibility()
 
 	var count:    int   = active_pane.get_selected_count() if active_pane else 1
 	var is_local: bool  = entry.get("local", false)
@@ -742,8 +772,12 @@ func _clear_detail() -> void:
 	delete_btn.disabled   = true
 	url_copy_btn.disabled = false
 	_sync_btn.disabled    = true
-	if _mobile_mode:
-		_detail_panel.visible = false
+	_update_content_visibility()
+
+func _on_detail_back() -> void:
+	left_pane.deselect()
+	right_pane.deselect()
+	_clear_detail()
 
 # ─────────────────────────────────────────────────────────────────────────────
 #  Dialogs
@@ -1075,11 +1109,11 @@ func _do_move() -> void:
 #  Progress helpers
 # ─────────────────────────────────────────────────────────────────────────────
 func _show_progress(max_val: int = 1) -> void:
-	_detail_panel.visible  = true
 	progress_bar.max_value = max_val
 	progress_bar.value     = 0
 	progress_bar.visible   = true
 	progress_label.visible = true
+	_update_content_visibility()
 	if not _spinning:
 		_spinning = true
 		_run_spin()
@@ -1087,8 +1121,7 @@ func _show_progress(max_val: int = 1) -> void:
 func _hide_progress() -> void:
 	progress_bar.visible   = false
 	progress_label.visible = false
-	if _mobile_mode and not _has_selection:
-		_detail_panel.visible = false
+	_update_content_visibility()
 	_spinning = false
 	_godocog1.rotation = 0.0
 	_godocog2.rotation = 0.0
