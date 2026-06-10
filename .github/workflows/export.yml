@@ -1,0 +1,175 @@
+name: Export
+
+on:
+  push:
+    tags:
+      - 'v*'
+  workflow_dispatch:
+
+env:
+  GODOT_VERSION: "4.6"
+  GODOT_RELEASE: "stable"
+  PROJECT_PATH: project
+
+jobs:
+  export:
+    name: Export
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Cache Godot binary
+        id: cache-bin
+        uses: actions/cache@v4
+        with:
+          path: ~/.local/bin/godot
+          key: godot-bin-${{ env.GODOT_VERSION }}-${{ env.GODOT_RELEASE }}
+
+      - name: Cache export templates
+        id: cache-templates
+        uses: actions/cache@v4
+        with:
+          path: ~/.local/share/godot/export_templates
+          key: godot-templates-${{ env.GODOT_VERSION }}-${{ env.GODOT_RELEASE }}
+
+      - name: Install Godot
+        if: steps.cache-bin.outputs.cache-hit != 'true'
+        run: |
+          BIN="Godot_v${{ env.GODOT_VERSION }}-${{ env.GODOT_RELEASE }}_linux.x86_64"
+          wget -q "https://github.com/godotengine/godot/releases/download/${{ env.GODOT_VERSION }}-${{ env.GODOT_RELEASE }}/${BIN}.zip" \
+               -O /tmp/godot.zip
+          mkdir -p ~/.local/bin
+          unzip -q /tmp/godot.zip -d /tmp/godot_extract/
+          mv "/tmp/godot_extract/$BIN" ~/.local/bin/godot
+          chmod +x ~/.local/bin/godot
+
+      - name: Download export templates
+        if: steps.cache-templates.outputs.cache-hit != 'true'
+        run: |
+          TPZ="Godot_v${{ env.GODOT_VERSION }}-${{ env.GODOT_RELEASE }}_export_templates.tpz"
+          wget -q "https://github.com/godotengine/godot/releases/download/${{ env.GODOT_VERSION }}-${{ env.GODOT_RELEASE }}/$TPZ" \
+               -O /tmp/templates.tpz
+          # Use version.txt inside the archive to get the exact directory name Godot expects
+          TEMPLATES_VERSION=$(unzip -p /tmp/templates.tpz templates/version.txt)
+          TEMPLATES_DIR="$HOME/.local/share/godot/export_templates/$TEMPLATES_VERSION"
+          mkdir -p "$TEMPLATES_DIR"
+          unzip -q /tmp/templates.tpz -d /tmp/templates_extract/
+          mv /tmp/templates_extract/templates/* "$TEMPLATES_DIR/"
+
+      - name: Add Godot to PATH
+        run: echo "$HOME/.local/bin" >> "$GITHUB_PATH"
+
+      - name: Setup Android environment
+        run: |
+          # Generate a keystore for APK signing
+          mkdir -p ~/.android
+          keytool -genkey -v \
+            -keystore ~/.android/debug.keystore \
+            -storepass android \
+            -alias androiddebugkey \
+            -keypass android \
+            -dname "CN=Android Debug,O=Android,C=US" \
+            -keyalg RSA -keysize 2048 -validity 10000 \
+            -noprompt 2>/dev/null
+
+          # Ensure Android build-tools are available for apksigner
+          SDKMANAGER="$ANDROID_SDK_ROOT/cmdline-tools/latest/bin/sdkmanager"
+          if [ -f "$SDKMANAGER" ]; then
+            yes | "$SDKMANAGER" --update 2>/dev/null || true
+          fi
+
+          # Write Godot editor settings so it can find the Android SDK and keystore
+          mkdir -p ~/.config/godot
+          cat > ~/.config/godot/editor_settings-4.tres << EOF
+[gd_resource type="EditorSettings" format=3]
+
+[resource]
+export/android/android_sdk_path = "$ANDROID_SDK_ROOT"
+export/android/debug_keystore = "$HOME/.android/debug.keystore"
+export/android/debug_keystore_user = "androiddebugkey"
+export/android/debug_keystore_pass = "android"
+EOF
+
+      - name: Create output directories
+        run: mkdir -p builds/{windows-32,windows-64,linux-x86_32,linux-x86_64,linux-arm64,macos,android,web}
+
+      - name: Export Windows 32
+        run: |
+          godot --headless --path "$PROJECT_PATH" \
+            --export-release "Windows 32" \
+            "$GITHUB_WORKSPACE/builds/windows-32/CopypartyClient.exe"
+
+      - name: Export Windows 64
+        run: |
+          godot --headless --path "$PROJECT_PATH" \
+            --export-release "Windows Desktop" \
+            "$GITHUB_WORKSPACE/builds/windows-64/CopypartyClient.exe"
+
+      - name: Export Linux x86_32
+        run: |
+          godot --headless --path "$PROJECT_PATH" \
+            --export-release "Linux x86_32" \
+            "$GITHUB_WORKSPACE/builds/linux-x86_32/CopypartyClient.x86_32"
+
+      - name: Export Linux x86_64
+        run: |
+          godot --headless --path "$PROJECT_PATH" \
+            --export-release "Linux" \
+            "$GITHUB_WORKSPACE/builds/linux-x86_64/CopypartyClient.x86_64"
+
+      - name: Export Linux arm64
+        run: |
+          godot --headless --path "$PROJECT_PATH" \
+            --export-release "Linux arm64" \
+            "$GITHUB_WORKSPACE/builds/linux-arm64/CopypartyClient.arm64"
+
+      - name: Export macOS
+        run: |
+          godot --headless --path "$PROJECT_PATH" \
+            --export-release "macOS" \
+            "$GITHUB_WORKSPACE/builds/macos/CopypartyClient.zip"
+
+      - name: Export Android
+        run: |
+          godot --headless --path "$PROJECT_PATH" \
+            --export-release "Android" \
+            "$GITHUB_WORKSPACE/builds/android/CopypartyClient.apk"
+
+      - name: Export Web
+        run: |
+          godot --headless --path "$PROJECT_PATH" \
+            --export-release "Web" \
+            "$GITHUB_WORKSPACE/builds/web/index.html"
+
+      - name: Package builds
+        run: |
+          cd builds
+          zip -r windows-32.zip windows-32/
+          zip -r windows-64.zip windows-64/
+          zip -r linux-x86_32.zip linux-x86_32/
+          zip -r linux-x86_64.zip linux-x86_64/
+          zip -r linux-arm64.zip linux-arm64/
+          # macOS export from Godot is already a zip containing the .app bundle
+          cp macos/CopypartyClient.zip macos.zip
+          zip -r android.zip android/
+          zip -r web.zip web/
+
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: builds
+          path: builds/*.zip
+          if-no-files-found: error
+
+      - name: Create GitHub Release
+        if: startsWith(github.ref, 'refs/tags/')
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          TAG="${GITHUB_REF#refs/tags/}"
+          gh release create "$TAG" builds/*.zip \
+            --title "Release $TAG" \
+            --generate-notes
