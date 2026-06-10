@@ -77,7 +77,9 @@ var _confirm_callback: Callable = Callable()
 var search_entries: Array[Dictionary] = []
 var move_src_path: String = ""
 var move_is_copy   := false
-var _mkdir_pane: FilePane = null
+var _mkdir_pane:  FilePane = null
+var _new_md_pane: FilePane = null
+var _new_md_input: LineEdit
 var _sync_local_entry:  Dictionary = {}
 var _sync_remote_entry: Dictionary = {}
 var _xfer_progress  := 0
@@ -86,6 +88,12 @@ var _custom_color      := Color(0.27, 0.56, 0.90)
 var _custom_bg_color   := Color(0.12, 0.12, 0.14)
 var _custom_text_color := Color(0.90, 0.90, 0.92)
 var _opacity           := 1.0
+var _md_label:  RichTextLabel
+var _md_edit:   TextEdit
+var _md_title:  Label
+var _md_save:   Button
+var _md_entry:  Dictionary = {}
+var _md_pane:   FilePane
 
 # ── Scene nodes: toolbar ─────────────────────────────────────────────────────
 @onready var _bg:           ColorRect  = $BG
@@ -178,6 +186,8 @@ func _ready() -> void:
 	get_window().files_dropped.connect(_on_os_files_dropped)
 	if OS.has_feature("web"):
 		_setup_web_drop_listener()
+	_create_markdown_dialog()
+	_create_new_md_dialog()
 
 	# Opacity slider
 	_opacity_slider.value = _opacity
@@ -293,6 +303,7 @@ func _ready() -> void:
 	_connect_pane(right_pane)
 	right_pane.upload_requested.connect(_on_upload_requested)
 	right_pane.directory_loaded.connect(_on_right_pane_loaded)
+	right_pane.new_md_requested.connect(_on_new_md_requested.bind(right_pane))
 
 	# Apply visual theme
 	_apply_main_theme_colors()
@@ -415,12 +426,159 @@ func _on_pane_selection_changed(entry: Dictionary, pane: FilePane) -> void:
 
 func _on_pane_file_opened(entry: Dictionary, pane: FilePane) -> void:
 	active_pane = pane
+	var ext := (entry.get("ext", "") as String).to_lower()
+	if ext.is_empty():
+		ext = entry.get("name", "").get_extension().to_lower()
+	if ext == "md":
+		await _open_markdown_file(entry, pane)
+		return
 	if pane.source == FilePane.Source.LOCAL:
 		OS.shell_open(entry.get("href", ""))
 	else:
 		var url := api.get_download_url(_entry_vpath(entry))
 		if url:
 			OS.shell_open(url)
+
+func _create_markdown_dialog() -> void:
+	var dlg := PanelContainer.new()
+	dlg.name = "MarkdownDialog"
+	dlg.visible = false
+	dlg.custom_minimum_size = Vector2(800, 600)
+	var vbox := VBoxContainer.new()
+	dlg.add_child(vbox)
+
+	var hdr := HBoxContainer.new()
+	_md_title = Label.new()
+	_md_title.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	hdr.add_child(_md_title)
+	var edit_btn := Button.new()
+	edit_btn.text = "Edit"
+	edit_btn.pressed.connect(_md_toggle_edit)
+	hdr.add_child(edit_btn)
+	_md_save = Button.new()
+	_md_save.text = "Save"
+	_md_save.visible = false
+	_md_save.pressed.connect(_md_save_file)
+	hdr.add_child(_md_save)
+	var x := Button.new()
+	x.text = "✕"
+	x.pressed.connect(_close_dialog)
+	hdr.add_child(x)
+	vbox.add_child(hdr)
+
+	var scroll := ScrollContainer.new()
+	scroll.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	vbox.add_child(scroll)
+
+	_md_label = RichTextLabel.new()
+	_md_label.bbcode_enabled = true
+	_md_label.fit_content = true
+	_md_label.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	_md_label.meta_clicked.connect(func(url: Variant): OS.shell_open(str(url)))
+	scroll.add_child(_md_label)
+
+	_md_edit = TextEdit.new()
+	_md_edit.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	_md_edit.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	_md_edit.custom_minimum_size = Vector2(0, 500)
+	_md_edit.visible = false
+	_md_edit.wrap_mode = TextEdit.LINE_WRAPPING_BOUNDARY
+	scroll.add_child(_md_edit)
+
+	add_child(dlg)
+
+func _open_markdown_file(entry: Dictionary, pane: FilePane) -> void:
+	var data: PackedByteArray
+	if pane.source == FilePane.Source.REMOTE:
+		data = await api.download_file(_entry_vpath(entry))
+	else:
+		data = FileAccess.get_file_as_bytes(entry.get("href", ""))
+	if data.is_empty():
+		_set_status("Cannot read: " + entry.get("name", ""))
+		return
+	_md_entry = entry
+	_md_pane  = pane
+	var text  := data.get_string_from_utf8()
+	_md_title.text = entry.get("name", "")
+	_md_label.text = Markdown.to_bbcode(text)
+	_md_edit.text  = text
+	_md_label.visible = true
+	_md_edit.visible  = false
+	_md_save.visible  = false
+	_show_dialog("MarkdownDialog")
+
+func _md_toggle_edit() -> void:
+	var editing := not _md_edit.visible
+	_md_label.visible = not editing
+	_md_edit.visible  = editing
+	_md_save.visible  = editing
+	if not editing:
+		_md_label.text = Markdown.to_bbcode(_md_edit.text)
+
+func _md_save_file() -> void:
+	var text  := _md_edit.text
+	var bytes := text.to_utf8_buffer()
+	var fname: String = _md_entry.get("name", "")
+	if _md_pane.source == FilePane.Source.REMOTE:
+		var dir  := _entry_vpath(_md_entry).get_base_dir()
+		var code := await api.save_file(dir, fname, bytes)
+		if code in [200, 201]:
+			_set_status("Saved %s." % fname)
+			_md_label.text = Markdown.to_bbcode(text)
+		else:
+			_set_status("Save failed (HTTP %d): %s" % [code, fname])
+	else:
+		var fa := FileAccess.open(_md_entry.get("href", ""), FileAccess.WRITE)
+		if fa == null:
+			_set_status("Cannot write: " + fname)
+			return
+		fa.store_string(text)
+		_set_status("Saved %s." % fname)
+
+func _create_new_md_dialog() -> void:
+	var dlg := PanelContainer.new()
+	dlg.name = "NewMdDialog"
+	dlg.visible = false
+	dlg.custom_minimum_size = Vector2(400, 0)
+	var vbox := VBoxContainer.new()
+	dlg.add_child(vbox)
+	var lbl := Label.new()
+	lbl.text = "New markdown file name:"
+	vbox.add_child(lbl)
+	_new_md_input = LineEdit.new()
+	_new_md_input.placeholder_text = "notes.md"
+	_new_md_input.text_submitted.connect(_do_new_md.unbind(1))
+	vbox.add_child(_new_md_input)
+	var btns := HBoxContainer.new()
+	var ok := Button.new(); ok.text = "Create"; ok.pressed.connect(_do_new_md)
+	var cancel := Button.new(); cancel.text = "Cancel"; cancel.pressed.connect(_close_dialog)
+	btns.add_child(ok); btns.add_child(cancel)
+	vbox.add_child(btns)
+	add_child(dlg)
+
+func _on_new_md_requested(_dest_path: String, pane: FilePane) -> void:
+	_new_md_pane = pane
+	_new_md_input.text = ""
+	_show_dialog("NewMdDialog")
+	_new_md_input.grab_focus()
+
+func _do_new_md() -> void:
+	var fname := _new_md_input.text.strip_edges()
+	if fname.is_empty() or _new_md_pane == null:
+		return
+	if not fname.ends_with(".md"):
+		fname += ".md"
+	_close_dialog()
+	var dest := _new_md_pane.current_path
+	var initial := ("# %s\n" % fname.get_basename()).to_utf8_buffer()
+	var code := await api.upload_file(dest, fname, initial)
+	if code not in [200, 201]:
+		_set_status("Create failed (HTTP %d): %s" % [code, fname])
+		return
+	_new_md_pane.refresh()
+	var entry := {"name": fname, "href": dest.rstrip("/") + "/" + fname,
+		"ext": "md", "size": 0, "ts": 0, "is_dir": false, "tags": {}}
+	await _open_markdown_file(entry, _new_md_pane)
 
 func _on_pane_delete_requested(entries: Array, pane: FilePane) -> void:
 	active_pane = pane
