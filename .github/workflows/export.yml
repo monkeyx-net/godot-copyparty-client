@@ -165,11 +165,60 @@ jobs:
           [ -f android/CopypartyClient.apk ] && zip -r android.zip android/
           [ -f web/index.html ] && zip -r web.zip web/
 
-      - name: Upload artifacts
+      - name: Upload Windows 32 artifact
         uses: actions/upload-artifact@v4
         with:
-          name: builds
-          path: builds/*.zip
+          name: windows-32
+          path: builds/windows-32.zip
+          if-no-files-found: warn
+
+      - name: Upload Windows 64 artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: windows-64
+          path: builds/windows-64.zip
+          if-no-files-found: warn
+
+      - name: Upload Linux x86_32 artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: linux-x86_32
+          path: builds/linux-x86_32.zip
+          if-no-files-found: warn
+
+      - name: Upload Linux x86_64 artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: linux-x86_64
+          path: builds/linux-x86_64.zip
+          if-no-files-found: warn
+
+      - name: Upload Linux arm64 artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: linux-arm64
+          path: builds/linux-arm64.zip
+          if-no-files-found: warn
+
+      - name: Upload macOS artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: macos
+          path: builds/macos.zip
+          if-no-files-found: warn
+
+      - name: Upload Android artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: android
+          path: builds/android.zip
+          if-no-files-found: warn
+
+      - name: Upload Web artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: web
+          path: builds/web.zip
           if-no-files-found: warn
 
       - name: Create GitHub Release
