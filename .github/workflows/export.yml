@@ -33,7 +33,7 @@ jobs:
         uses: actions/cache@v4
         with:
           path: ~/.local/share/godot/export_templates
-          key: godot-templates-${{ env.GODOT_VERSION }}-${{ env.GODOT_RELEASE }}
+          key: godot-templates-${{ env.GODOT_VERSION }}-${{ env.GODOT_RELEASE }}-v2
 
       - name: Install Godot
         if: steps.cache-bin.outputs.cache-hit != 'true'
@@ -83,13 +83,25 @@ jobs:
 
           # Install Android build template from export templates (required for Gradle build)
           TEMPLATES_DIR=$(find "$HOME/.local/share/godot/export_templates" -maxdepth 1 -mindepth 1 -type d 2>/dev/null | head -1)
-          ANDROID_SRC_ZIP="${TEMPLATES_DIR}/android_source.zip"
-          if [ -f "$ANDROID_SRC_ZIP" ]; then
-            mkdir -p "$GITHUB_WORKSPACE/$PROJECT_PATH/android"
-            unzip -q "$ANDROID_SRC_ZIP" -d "$GITHUB_WORKSPACE/$PROJECT_PATH/android/build/"
-            touch "$GITHUB_WORKSPACE/$PROJECT_PATH/android/.gdignore"
-            echo "$(basename "$TEMPLATES_DIR")" > "$GITHUB_WORKSPACE/$PROJECT_PATH/android/build/.version"
+          if [ -z "$TEMPLATES_DIR" ]; then
+            echo "ERROR: No Godot templates directory found"
+            ls -la "$HOME/.local/share/godot/export_templates/" 2>/dev/null || echo "Base templates dir missing"
+            exit 1
           fi
+          echo "Templates dir: $TEMPLATES_DIR"
+          # Search recursively in case zip is nested in a subdirectory
+          ANDROID_SRC_ZIP=$(find "$TEMPLATES_DIR" -name "android_source.zip" 2>/dev/null | head -1)
+          if [ -z "$ANDROID_SRC_ZIP" ]; then
+            echo "ERROR: android_source.zip not found. Templates dir contents:"
+            find "$TEMPLATES_DIR" -type f | sort
+            exit 1
+          fi
+          echo "Found android source zip: $ANDROID_SRC_ZIP"
+          mkdir -p "$GITHUB_WORKSPACE/$PROJECT_PATH/android"
+          unzip -q "$ANDROID_SRC_ZIP" -d "$GITHUB_WORKSPACE/$PROJECT_PATH/android/build/"
+          touch "$GITHUB_WORKSPACE/$PROJECT_PATH/android/.gdignore"
+          printf '%s' "$(basename "$TEMPLATES_DIR")" > "$GITHUB_WORKSPACE/$PROJECT_PATH/android/build/.version"
+          echo "Android build template installed, version: $(cat "$GITHUB_WORKSPACE/$PROJECT_PATH/android/build/.version")"
 
           # Write Godot editor settings so it can find the Android SDK and keystore
           mkdir -p ~/.config/godot
