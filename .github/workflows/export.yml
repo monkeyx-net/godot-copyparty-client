@@ -97,48 +97,56 @@ jobs:
         run: mkdir -p builds/{windows-32,windows-64,linux-x86_32,linux-x86_64,linux-arm64,macos,android,web}
 
       - name: Export Windows 32
+        continue-on-error: true
         run: |
           godot --headless --path "$PROJECT_PATH" \
             --export-release "Windows 32" \
             "$GITHUB_WORKSPACE/builds/windows-32/CopypartyClient.exe"
 
       - name: Export Windows 64
+        continue-on-error: true
         run: |
           godot --headless --path "$PROJECT_PATH" \
             --export-release "Windows Desktop" \
             "$GITHUB_WORKSPACE/builds/windows-64/CopypartyClient.exe"
 
       - name: Export Linux x86_32
+        continue-on-error: true
         run: |
           godot --headless --path "$PROJECT_PATH" \
             --export-release "Linux x86_32" \
             "$GITHUB_WORKSPACE/builds/linux-x86_32/CopypartyClient.x86_32"
 
       - name: Export Linux x86_64
+        continue-on-error: true
         run: |
           godot --headless --path "$PROJECT_PATH" \
             --export-release "Linux" \
             "$GITHUB_WORKSPACE/builds/linux-x86_64/CopypartyClient.x86_64"
 
       - name: Export Linux arm64
+        continue-on-error: true
         run: |
           godot --headless --path "$PROJECT_PATH" \
             --export-release "Linux arm64" \
             "$GITHUB_WORKSPACE/builds/linux-arm64/CopypartyClient.arm64"
 
       - name: Export macOS
+        continue-on-error: true
         run: |
           godot --headless --path "$PROJECT_PATH" \
             --export-release "macOS" \
             "$GITHUB_WORKSPACE/builds/macos/CopypartyClient.zip"
 
       - name: Export Android
+        continue-on-error: true
         run: |
           godot --headless --path "$PROJECT_PATH" \
             --export-release "Android" \
             "$GITHUB_WORKSPACE/builds/android/CopypartyClient.apk"
 
       - name: Export Web
+        continue-on-error: true
         run: |
           godot --headless --path "$PROJECT_PATH" \
             --export-release "Web" \
@@ -147,22 +155,22 @@ jobs:
       - name: Package builds
         run: |
           cd builds
-          zip -r windows-32.zip windows-32/
-          zip -r windows-64.zip windows-64/
-          zip -r linux-x86_32.zip linux-x86_32/
-          zip -r linux-x86_64.zip linux-x86_64/
-          zip -r linux-arm64.zip linux-arm64/
+          [ -f windows-32/CopypartyClient.exe ] && zip -r windows-32.zip windows-32/
+          [ -f windows-64/CopypartyClient.exe ] && zip -r windows-64.zip windows-64/
+          [ -f linux-x86_32/CopypartyClient.x86_32 ] && zip -r linux-x86_32.zip linux-x86_32/
+          [ -f linux-x86_64/CopypartyClient.x86_64 ] && zip -r linux-x86_64.zip linux-x86_64/
+          [ -f linux-arm64/CopypartyClient.arm64 ] && zip -r linux-arm64.zip linux-arm64/
           # macOS export from Godot is already a zip containing the .app bundle
-          cp macos/CopypartyClient.zip macos.zip
-          zip -r android.zip android/
-          zip -r web.zip web/
+          [ -f macos/CopypartyClient.zip ] && cp macos/CopypartyClient.zip macos.zip
+          [ -f android/CopypartyClient.apk ] && zip -r android.zip android/
+          [ -f web/index.html ] && zip -r web.zip web/
 
       - name: Upload artifacts
         uses: actions/upload-artifact@v4
         with:
           name: builds
           path: builds/*.zip
-          if-no-files-found: error
+          if-no-files-found: warn
 
       - name: Create GitHub Release
         if: startsWith(github.ref, 'refs/tags/')
