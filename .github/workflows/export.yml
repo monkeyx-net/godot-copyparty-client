@@ -88,6 +88,7 @@ jobs:
             mkdir -p "$GITHUB_WORKSPACE/$PROJECT_PATH/android"
             unzip -q "$ANDROID_SRC_ZIP" -d "$GITHUB_WORKSPACE/$PROJECT_PATH/android/build/"
             touch "$GITHUB_WORKSPACE/$PROJECT_PATH/android/.gdignore"
+            echo "$(basename "$TEMPLATES_DIR")" > "$GITHUB_WORKSPACE/$PROJECT_PATH/android/build/.version"
           fi
 
           # Write Godot editor settings so it can find the Android SDK and keystore
@@ -220,7 +221,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: android
-          path: builds/android.zip
+          path: builds/android/CopypartyClient.apk
           if-no-files-found: warn
 
       - name: Upload Web artifact
