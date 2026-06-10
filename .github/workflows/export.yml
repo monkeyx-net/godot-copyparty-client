@@ -83,15 +83,15 @@ jobs:
 
           # Write Godot editor settings so it can find the Android SDK and keystore
           mkdir -p ~/.config/godot
-          cat > ~/.config/godot/editor_settings-4.tres << EOF
-[gd_resource type="EditorSettings" format=3]
-
-[resource]
-export/android/android_sdk_path = "$ANDROID_SDK_ROOT"
-export/android/debug_keystore = "$HOME/.android/debug.keystore"
-export/android/debug_keystore_user = "androiddebugkey"
-export/android/debug_keystore_pass = "android"
-EOF
+          {
+            echo '[gd_resource type="EditorSettings" format=3]'
+            echo ''
+            echo '[resource]'
+            echo "export/android/android_sdk_path = \"$ANDROID_SDK_ROOT\""
+            echo "export/android/debug_keystore = \"$HOME/.android/debug.keystore\""
+            echo 'export/android/debug_keystore_user = "androiddebugkey"'
+            echo 'export/android/debug_keystore_pass = "android"'
+          } > ~/.config/godot/editor_settings-4.tres
 
       - name: Create output directories
         run: mkdir -p builds/{windows-32,windows-64,linux-x86_32,linux-x86_64,linux-arm64,macos,android,web}
