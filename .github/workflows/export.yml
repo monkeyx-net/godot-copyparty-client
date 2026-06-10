@@ -75,10 +75,19 @@ jobs:
             -keyalg RSA -keysize 2048 -validity 10000 \
             -noprompt 2>/dev/null
 
-          # Ensure Android build-tools are available for apksigner
+          # Ensure required Android SDK components are available
           SDKMANAGER="$ANDROID_SDK_ROOT/cmdline-tools/latest/bin/sdkmanager"
           if [ -f "$SDKMANAGER" ]; then
-            yes | "$SDKMANAGER" --update 2>/dev/null || true
+            yes | "$SDKMANAGER" --sdk_root="$ANDROID_SDK_ROOT" "platforms;android-35" "build-tools;35.0.0" 2>/dev/null || true
+          fi
+
+          # Install Android build template from export templates (required for Gradle build)
+          TEMPLATES_DIR=$(find "$HOME/.local/share/godot/export_templates" -maxdepth 1 -mindepth 1 -type d 2>/dev/null | head -1)
+          ANDROID_SRC_ZIP="${TEMPLATES_DIR}/android_source.zip"
+          if [ -f "$ANDROID_SRC_ZIP" ]; then
+            mkdir -p "$GITHUB_WORKSPACE/$PROJECT_PATH/android"
+            unzip -q "$ANDROID_SRC_ZIP" -d "$GITHUB_WORKSPACE/$PROJECT_PATH/android/build/"
+            touch "$GITHUB_WORKSPACE/$PROJECT_PATH/android/.gdignore"
           fi
 
           # Write Godot editor settings so it can find the Android SDK and keystore
