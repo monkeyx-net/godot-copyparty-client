@@ -174,73 +174,60 @@ jobs:
             --export-release "Web" \
             "$GITHUB_WORKSPACE/builds/web/index.html"
 
-      - name: Package builds
-        run: |
-          cd builds
-          [ -f windows-32/CopypartyClient.exe ] && zip -r windows-32.zip windows-32/
-          [ -f windows-64/CopypartyClient.exe ] && zip -r windows-64.zip windows-64/
-          [ -f linux-x86_32/CopypartyClient.x86_32 ] && zip -r linux-x86_32.zip linux-x86_32/
-          [ -f linux-x86_64/CopypartyClient.x86_64 ] && zip -r linux-x86_64.zip linux-x86_64/
-          [ -f linux-arm64/CopypartyClient.arm64 ] && zip -r linux-arm64.zip linux-arm64/
-          # macOS export from Godot is already a zip containing the .app bundle
-          [ -f macos/CopypartyClient.zip ] && cp macos/CopypartyClient.zip macos.zip
-          [ -f android/CopypartyClient.apk ] && zip -r android.zip android/
-          [ -f web/index.html ] && zip -r web.zip web/
-
       - name: Upload Windows 32 artifact
         uses: actions/upload-artifact@v4
         with:
           name: windows-32
-          path: builds/windows-32.zip
+          path: builds/windows-32/
           if-no-files-found: warn
 
       - name: Upload Windows 64 artifact
         uses: actions/upload-artifact@v4
         with:
           name: windows-64
-          path: builds/windows-64.zip
+          path: builds/windows-64/
           if-no-files-found: warn
 
       - name: Upload Linux x86_32 artifact
         uses: actions/upload-artifact@v4
         with:
           name: linux-x86_32
-          path: builds/linux-x86_32.zip
+          path: builds/linux-x86_32/
           if-no-files-found: warn
 
       - name: Upload Linux x86_64 artifact
         uses: actions/upload-artifact@v4
         with:
           name: linux-x86_64
-          path: builds/linux-x86_64.zip
+          path: builds/linux-x86_64/
           if-no-files-found: warn
 
       - name: Upload Linux arm64 artifact
         uses: actions/upload-artifact@v4
         with:
           name: linux-arm64
-          path: builds/linux-arm64.zip
+          path: builds/linux-arm64/
           if-no-files-found: warn
 
       - name: Upload macOS artifact
         uses: actions/upload-artifact@v4
         with:
           name: macos
-          path: builds/macos.zip
+          path: builds/macos/
           if-no-files-found: warn
 
       - name: Upload Android artifact
         uses: actions/upload-artifact@v4
         with:
           name: android
-          path: builds/android/CopypartyClient.apk
+          path: builds/android/
           if-no-files-found: warn
 
       - name: Upload Web artifact
         uses: actions/upload-artifact@v4
         with:
           name: web
-          path: builds/web.zip
+          path: builds/web/
           if-no-files-found: warn
 
       - name: Create GitHub Release
@@ -249,6 +236,12 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           TAG="${GITHUB_REF#refs/tags/}"
-          gh release create "$TAG" builds/*.zip \
+          ASSETS=()
+          for dir in builds/windows-32 builds/windows-64 builds/linux-x86_32 builds/linux-x86_64 builds/linux-arm64 builds/macos builds/android builds/web; do
+            for f in "$dir"/*; do
+              [ -f "$f" ] && ASSETS+=("$f")
+            done
+          done
+          gh release create "$TAG" "${ASSETS[@]}" \
             --title "Release $TAG" \
             --generate-notes
