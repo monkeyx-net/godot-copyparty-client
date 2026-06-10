@@ -100,6 +100,12 @@ func download_file(vpath: String) -> PackedByteArray:
 
 # Uploads binary data via PUT to base_url/dir_path/filename.
 # Returns true on success.
+func save_file(dir_path: String, filename: String, data: PackedByteArray) -> int:
+	var url := base_url + _vpath(dir_path) + "/" + filename.uri_encode() + "?j"
+	var extra := PackedStringArray(["Content-Type: application/octet-stream"])
+	var resp := await _req(url, HTTPClient.METHOD_PUT, extra, data)
+	return resp[1]
+
 func upload_file(dir_path: String, filename: String, data: PackedByteArray) -> int:
 	if OS.has_feature("web"):
 		# PUT with octet-stream triggers a CORS preflight that many servers block.

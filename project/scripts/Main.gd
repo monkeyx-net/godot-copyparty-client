@@ -521,7 +521,7 @@ func _md_save_file() -> void:
 	var fname: String = _md_entry.get("name", "")
 	if _md_pane.source == FilePane.Source.REMOTE:
 		var dir  := _entry_vpath(_md_entry).get_base_dir()
-		var code := await api.upload_file(dir, fname, bytes)
+		var code := await api.save_file(dir, fname, bytes)
 		if code in [200, 201]:
 			_set_status("Saved %s." % fname)
 			_md_label.text = Markdown.to_bbcode(text)
