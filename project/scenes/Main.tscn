@@ -337,6 +337,12 @@ size_flags_horizontal = 3
 disabled = true
 text = "⇆ Sync"
 
+[node name="EditBtn" type="Button" parent="VBoxContainer/ContentHBox/DetailPanel/DetailMargin/DetailScroll/DetailVBox/ActionGrid"]
+layout_mode = 2
+size_flags_horizontal = 3
+disabled = true
+text = "📄 Edit .md"
+
 [node name="NewMdBtn" type="Button" parent="VBoxContainer/ContentHBox/DetailPanel/DetailMargin/DetailScroll/DetailVBox/ActionGrid"]
 layout_mode = 2
 size_flags_horizontal = 3

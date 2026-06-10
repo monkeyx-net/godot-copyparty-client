@@ -143,6 +143,7 @@ var _md_pane:   FilePane
 @onready var url_copy_btn:   Button   = $VBoxContainer/ContentHBox/DetailPanel/DetailMargin/DetailScroll/DetailVBox/ActionGrid/UrlCopyBtn
 @onready var _sync_btn:      Button   = $VBoxContainer/ContentHBox/DetailPanel/DetailMargin/DetailScroll/DetailVBox/ActionGrid/SyncBtn
 @onready var _new_md_btn:    Button   = $VBoxContainer/ContentHBox/DetailPanel/DetailMargin/DetailScroll/DetailVBox/ActionGrid/NewMdBtn
+@onready var _edit_btn:      Button   = $VBoxContainer/ContentHBox/DetailPanel/DetailMargin/DetailScroll/DetailVBox/ActionGrid/EditBtn
 @onready var status_log:     TextEdit = $VBoxContainer/ContentHBox/DetailPanel/DetailMargin/DetailScroll/DetailVBox/StatusLog
 @onready var _godocog1:      Sprite2D = $VBoxContainer/ContentHBox/DetailPanel/DetailMargin/DetailScroll/DetailVBox/LogoBox/CopyartyLogo2/GodoCog1
 @onready var _godocog2:      Sprite2D = $VBoxContainer/ContentHBox/DetailPanel/DetailMargin/DetailScroll/DetailVBox/LogoBox/CopyartyLogo2/GodoCog2
@@ -304,11 +305,14 @@ func _ready() -> void:
 	left_pane.setup(FilePane.Source.LOCAL, api, _local_home())
 	right_pane.setup(FilePane.Source.REMOTE, api, "/")
 
+	_request_storage_permissions()
+
 	_connect_pane(left_pane)
 	_connect_pane(right_pane)
 	right_pane.upload_requested.connect(_on_upload_requested)
 	right_pane.directory_loaded.connect(_on_right_pane_loaded)
 	_new_md_btn.pressed.connect(_on_new_md_requested.bind("", right_pane))
+	_edit_btn.pressed.connect(_on_edit_md_pressed)
 
 	# Mobile: back button to return from the detail panel to the file list
 	_detail_back_btn = Button.new()
@@ -567,6 +571,14 @@ func _md_save_file() -> void:
 		fa.store_string(text)
 		_set_status("Saved %s." % fname)
 
+func _on_edit_md_pressed() -> void:
+	if active_pane == null:
+		return
+	var entry := active_pane.get_selected_entry()
+	if entry.is_empty():
+		return
+	await _open_markdown_file(entry, active_pane)
+
 func _create_new_md_dialog() -> void:
 	var dlg := PanelContainer.new()
 	dlg.name = "NewMdDialog"
@@ -716,6 +728,7 @@ func _update_detail_panel(entry: Dictionary) -> void:
 		url_copy_btn.disabled = true
 		delete_btn.disabled   = not (is_local or "delete" in perms)
 		_sync_btn.disabled    = true
+		_edit_btn.disabled    = true
 		return
 
 	var entry_name: String = entry.get("name",   "?")
@@ -758,6 +771,10 @@ func _update_detail_panel(entry: Dictionary) -> void:
 		and left_pane.source != right_pane.source
 		and not other_pane.find_entry_by_name(entry.get("name", "")).is_empty()
 	)
+	var md_ext := ext.to_lower()
+	if md_ext.is_empty() or md_ext == "—":
+		md_ext = entry_name.get_extension().to_lower()
+	_edit_btn.disabled = is_dir or md_ext != "md"
 
 func _clear_detail() -> void:
 	_has_selection = false
@@ -773,6 +790,7 @@ func _clear_detail() -> void:
 	delete_btn.disabled   = true
 	url_copy_btn.disabled = false
 	_sync_btn.disabled    = true
+	_edit_btn.disabled    = true
 	_update_content_visibility()
 
 func _on_detail_back() -> void:
@@ -1394,11 +1412,28 @@ func _entry_vpath(entry: Dictionary) -> String:
 	return href
 
 func _local_home() -> String:
+	if OS.get_name() == "Android":
+		var ext := OS.get_environment("EXTERNAL_STORAGE")
+		if ext.is_empty():
+			ext = OS.get_system_dir(OS.SYSTEM_DIR_DOCUMENTS).get_base_dir()
+		return ext if not ext.is_empty() else "/storage/emulated/0"
 	var h := OS.get_environment("HOME")
 	if h:
 		return h
 	h = OS.get_environment("USERPROFILE")
 	return h if h else "/"
+
+func _request_storage_permissions() -> void:
+	if OS.get_name() != "Android":
+		return
+	if "android.permission.MANAGE_EXTERNAL_STORAGE" in OS.get_granted_permissions():
+		return
+	get_tree().on_request_permissions_result.connect(_on_permission_result)
+	OS.request_permission("android.permission.MANAGE_EXTERNAL_STORAGE")
+
+func _on_permission_result(_permission: String, granted: bool) -> void:
+	if granted:
+		left_pane.refresh()
 
 func _set_status(msg: String) -> void:
 	if status_log == null:
@@ -1495,6 +1530,7 @@ func _apply_main_theme_colors() -> void:
 	_apply_btn(url_copy_btn, C_PANEL)
 	_apply_btn(_sync_btn, C_ACCENT2)
 	_apply_btn(_new_md_btn, C_PANEL)
+	_apply_btn(_edit_btn, C_PANEL)
 	status_log.add_theme_color_override("font_color", C_TEXT)
 	var sls := StyleBoxFlat.new()
 	sls.bg_color = C_BG
