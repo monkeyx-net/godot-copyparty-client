@@ -88,7 +88,7 @@ jobs:
             mkdir -p "$GITHUB_WORKSPACE/$PROJECT_PATH/android"
             unzip -q "$ANDROID_SRC_ZIP" -d "$GITHUB_WORKSPACE/$PROJECT_PATH/android/build/"
             touch "$GITHUB_WORKSPACE/$PROJECT_PATH/android/.gdignore"
-            echo "$(basename "$TEMPLATES_DIR")" > "$GITHUB_WORKSPACE/$PROJECT_PATH/android/build/.version"
+            echo "$(basename "$TEMPLATES_DIR")" > "$GITHUB_WORKSPACE/$PROJECT_PATH/android/.build_version"
           fi
 
           # Write Godot editor settings so it can find the Android SDK and keystore
